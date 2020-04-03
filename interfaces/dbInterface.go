@@ -8,4 +8,6 @@ var DBEngine DBInterface
 //DBInterface contains all the DB methods
 type DBInterface interface {
 	DBConnect(model.DBConfig) error
+	CheckUser(string) error
+	CreateUser(model.User) error
 }

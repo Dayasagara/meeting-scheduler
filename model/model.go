@@ -13,3 +13,9 @@ type DBConfig struct {
 	DBName   string
 	Port     string
 }
+
+type User struct {
+	UserID   int    `json:"userID" gorm:"column:userID;primary_key;AUTO_INCREMENT"`
+	Email    string `json:"email" gorm:"column:email"`
+	Password string `json:"password" gorm:"column:password"`
+}

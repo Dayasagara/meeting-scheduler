@@ -25,7 +25,9 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"*"},
 	}))
-	e.GET("/calendar/ping", receivers.Get.PingHandler)
+	g := e.Group("/calendar")
+	g.GET("/ping", receivers.Get.PingHandler)
+	g.POST("/signup", receivers.Post.SignUpHandler)
 	e.Start(":8080")
 }
 
