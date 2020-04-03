@@ -25,7 +25,7 @@ func (dc *DBRepo) DBConnect(dbConfig model.DBConfig) error {
 		dbConfig.Host, dbConfig.User, dbConfig.Password, dbConfig.DBName, dbConfig.Port)
 	dc.GormDB, err = gorm.Open("postgres", dbinfo)
 	if err != nil {
-		log.Println("Unable to connect DB %v", err)
+		log.Printf("Unable to connect DB %v", err)
 		return err
 	}
 	log.Printf("Postgres started at %s PORT", "5432")

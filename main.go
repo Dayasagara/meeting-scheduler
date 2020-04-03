@@ -28,6 +28,7 @@ func main() {
 	g := e.Group("/calendar")
 	g.GET("/ping", receivers.Get.PingHandler)
 	g.POST("/signup", receivers.Post.SignUpHandler)
+	g.POST("/login", receivers.Post.LoginHandler)
 	e.Start(":8080")
 }
 

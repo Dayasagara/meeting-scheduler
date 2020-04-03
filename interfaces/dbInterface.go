@@ -10,4 +10,5 @@ type DBInterface interface {
 	DBConnect(model.DBConfig) error
 	CheckUser(string) error
 	CreateUser(model.User) error
+	Authenticate(string, string) (error, int)
 }

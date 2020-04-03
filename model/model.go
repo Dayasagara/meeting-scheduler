@@ -19,3 +19,10 @@ type User struct {
 	Email    string `json:"email" gorm:"column:email"`
 	Password string `json:"password" gorm:"column:password"`
 }
+
+//CreateResponse defines response code and message with token
+type CreateResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Token   string `json:"token"`
+}

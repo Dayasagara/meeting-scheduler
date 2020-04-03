@@ -24,3 +24,13 @@ func (dc *DBRepo) CreateUser(user model.User) error {
 	}
 	return err
 }
+
+func (dc *DBRepo) Authenticate(email, password string) (error, int) {
+	var user model.User
+	rows := dc.GormDB.Debug().Where(`"email"=? and "password" =? `, email, password).First(&user).RowsAffected
+	if rows == 1 {
+		return nil, user.UserID
+	}
+	return errors.New("Invalid user"), 0
+
+}
