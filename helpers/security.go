@@ -54,6 +54,9 @@ func getSecretKey() (string, error) {
 }
 
 func DecryptToken(tokenString string) (map[string]interface{}, error) {
+	if tokenString == "" {
+		return nil, errors.New("Token not provided")
+	}
 	secretKey, err := getSecretKey()
 	if err != nil {
 		log.Println(err)

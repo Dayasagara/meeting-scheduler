@@ -30,6 +30,7 @@ func main() {
 	g.POST("/signup", receivers.Post.SignUpHandler)
 	g.POST("/login", receivers.Post.LoginHandler)
 	g.POST("/defineAvailability", receivers.Post.DefineAvHandler)
+	g.GET("/getAvailability", receivers.Get.GetSlotsHandler)
 	e.Start(":8080")
 }
 

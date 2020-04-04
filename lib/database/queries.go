@@ -64,7 +64,7 @@ func (dc *DBRepo) DefineAvailability(availability model.Availability) error {
 	if endConvErr != nil || startConvErr != nil {
 		return errors.New("Time conversion error")
 	}
-	for startSlot <= endSlot {
+	for startSlot < endSlot {
 		startTime = strconv.Itoa(startSlot) + ":00:00"
 		values = append(values, fmt.Sprintf(`('%d','%s', '%s', '%v')`,
 			availability.UserID, availability.Date, startTime, true))
@@ -76,6 +76,12 @@ func (dc *DBRepo) DefineAvailability(availability model.Availability) error {
 	}
 	tx.Commit()
 	return nil
+}
+
+func (dc *DBRepo) GetAvailability(userID int, date string) ([]model.AvailabilitySlots, error) {
+	var avSlots []model.AvailabilitySlots
+	err := dc.GormDB.Debug().Table("availabilities").Where(`"userID" = ? and "date" = ?`, userID, date).Find(&avSlots).Error
+	return avSlots, err
 }
 
 func (dc *DBRepo) rollbackTransaction() {

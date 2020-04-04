@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type APIResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -30,7 +32,19 @@ type CreateResponse struct {
 type Availability struct {
 	UserID    int    `json:"userID" gorm:"column:userID"`
 	Date      string `json:"date" gorm:"column:date"`
-	StartSlot string `json:"startSlot" gorm:"column:fromTime"`
-	EndSlot   string `json:"endSlot" gorm:"column:fromTime"`
+	StartSlot string `json:"startSlot"`
+	EndSlot   string `json:"endSlot"`
 	Duration  int    `json:"durationTime"`
+}
+
+type AvailabilitySlots struct {
+	StartTime    time.Time `json:"-" gorm:"column:startTime"`
+	Availability bool      `json:"availability" gorm:"column:availability"`
+	StartSlot    string    `json:"startSlot"`
+	EndSlot      string    `json:"endSlot"`
+}
+
+type GetAvParameters struct {
+	UserID int    `json:"userID"`
+	Date   string `json:"date"`
 }

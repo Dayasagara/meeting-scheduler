@@ -13,4 +13,5 @@ type DBInterface interface {
 	Authenticate(string, string) (error, int)
 	DefineAvailability(model.Availability) error
 	CheckForDuplicate(int, string) bool
+	GetAvailability(int, string) ([]model.AvailabilitySlots, error)
 }
