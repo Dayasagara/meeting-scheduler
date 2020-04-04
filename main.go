@@ -31,6 +31,7 @@ func main() {
 	g.POST("/login", receivers.Post.LoginHandler)
 	g.POST("/defineAvailability", receivers.Post.DefineAvHandler)
 	g.GET("/getAvailability", receivers.Get.GetSlotsHandler)
+	g.POST("/scheduleMeeting", receivers.Post.MeetingScheduler)
 	e.Start(":8080")
 }
 

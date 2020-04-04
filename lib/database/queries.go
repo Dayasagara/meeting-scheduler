@@ -84,6 +84,36 @@ func (dc *DBRepo) GetAvailability(userID int, date string) ([]model.Availability
 	return avSlots, err
 }
 
+//Check for availability of slot
+func (dc *DBRepo) CheckAvailability(userID int, date string, from string) bool {
+	var avSlots []model.AvailabilitySlots
+	rows := dc.GormDB.Debug().Table("availabilities").Where(`"userID" = ? and "date" = ? and "startTime" = ? and "availability" = ?`, userID, date, from, true).Find(&avSlots).RowsAffected
+	if rows >= 1 {
+		return true
+	}
+	return false
+}
+
+//update the availability table and schedule an event
+func (dc *DBRepo) ScheduleEvent(event model.ScheduleEvent) error {
+	var err error
+	tx = dc.GormDB.Begin()
+	err = tx.Debug().Table("availabilities").Where(`"userID" = ? and date = ? and "startTime" = ?`, event.UserID, event.Date, event.StartingFrom).
+		Updates(map[string]interface{}{"availability": false}).Error
+
+	if err != nil {
+		return err
+	}
+
+	rows := tx.Debug().Table("scheduled_events").Create(&event).RowsAffected
+	if rows == 0 {
+		dc.rollbackTransaction()
+		return errors.New("Error in creating Event")
+	}
+	tx.Commit()
+	return err
+}
+
 func (dc *DBRepo) rollbackTransaction() {
 	tx.Rollback()
 }
