@@ -31,13 +31,12 @@ func CreateToken(user model.User) (string, error) {
 	currentTime := time.Now()
 	tokenExpiry := currentTime.AddDate(0, 0, 1)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userID":     user.UserID,
-		"email":      user.Email,
-		"password":   user.Password,
-		"expiryTime": tokenExpiry,
+		"userID":   user.UserID,
+		"email":    user.Email,
+		"password": user.Password,
 	})
-	log.Println(tokenExpiry)
 
+	log.Println(tokenExpiry)
 	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		log.Println(err)
@@ -52,4 +51,24 @@ func getSecretKey() (string, error) {
 		return "", err
 	}
 	return os.Getenv("TOKENSECRET"), nil
+}
+
+func DecryptToken(tokenString string) (map[string]interface{}, error) {
+	secretKey, err := getSecretKey()
+	if err != nil {
+		log.Println(err)
+		return nil, errors.New("Couldn't find secret key")
+	}
+	token, _ := jwt.Parse(string(tokenString), func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("There was an error")
+		}
+		return []byte(secretKey), nil
+	})
+
+	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		mapClaims := token.Claims.(jwt.MapClaims)
+		return mapClaims, nil
+	}
+	return nil, errors.New("Token error")
 }

@@ -11,4 +11,6 @@ type DBInterface interface {
 	CheckUser(string) error
 	CreateUser(model.User) error
 	Authenticate(string, string) (error, int)
+	DefineAvailability(model.Availability) error
+	CheckForDuplicate(int, string) bool
 }

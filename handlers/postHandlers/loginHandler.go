@@ -19,7 +19,6 @@ func (p *PostHandler) LoginHandler(ctx echo.Context) error {
 	defer ctx.Request().Body.Close()
 	if reqErr != nil {
 		return helpers.CommonResponseHandler(400, "Req Error", ctx)
-
 	}
 
 	user.Password = helpers.Encrypt(user.Password)
@@ -37,7 +36,6 @@ func (p *PostHandler) LoginHandler(ctx echo.Context) error {
 		return helpers.CommonResponseHandler(400, "Internal error", ctx)
 	}
 
-	//createResponse := helpers.ResponseMapperWithID(200, "User Authenticated", user.UserID)
 	apiResponse := helpers.LoginResponse(200, "User Authenticated", token)
 	ctx.Response().WriteHeader(http.StatusOK)
 	return json.NewEncoder(ctx.Response()).Encode(apiResponse)

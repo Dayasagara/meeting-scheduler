@@ -26,3 +26,11 @@ type CreateResponse struct {
 	Message string `json:"message"`
 	Token   string `json:"token"`
 }
+
+type Availability struct {
+	UserID    int    `json:"userID" gorm:"column:userID"`
+	Date      string `json:"date" gorm:"column:date"`
+	StartSlot string `json:"startSlot" gorm:"column:fromTime"`
+	EndSlot   string `json:"endSlot" gorm:"column:fromTime"`
+	Duration  int    `json:"durationTime"`
+}

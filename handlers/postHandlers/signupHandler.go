@@ -14,7 +14,7 @@ import (
 type PostHandler struct{}
 
 func (p *PostHandler) SignUpHandler(ctx echo.Context) error {
-	var user = model.User{}
+	var user model.User
 	reqErr := json.NewDecoder(ctx.Request().Body).Decode(&user)
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	defer ctx.Request().Body.Close()
