@@ -16,4 +16,5 @@ type DBInterface interface {
 	GetAvailability(int, string) ([]model.AvailabilitySlots, error)
 	CheckAvailability(int, string, string) bool
 	ScheduleEvent(model.ScheduleEvent) error
+	GetEvents(int) ([]model.ScheduleEvent, error)
 }

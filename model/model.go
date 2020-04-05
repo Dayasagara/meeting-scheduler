@@ -57,4 +57,6 @@ type ScheduleEvent struct {
 	EventName    string `json:"eventName" gorm:"column:event_name"`
 	Description  string `json:"description" gorm:"column:description"`
 	ScheduledBy  int    `json:"scheduledBy" gorm:"column:scheduled_by"`
+	Location     string `json:"location" gorm:"column:location"`
+	Sync         bool   `json:"-" gorm:"column:sync"`
 }

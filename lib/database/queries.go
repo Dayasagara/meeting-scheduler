@@ -114,6 +114,21 @@ func (dc *DBRepo) ScheduleEvent(event model.ScheduleEvent) error {
 	return err
 }
 
+func (dc *DBRepo) GetEvents(userID int) ([]model.ScheduleEvent, error) {
+	var events []model.ScheduleEvent
+	err := dc.GormDB.Debug().Table("scheduled_events").Where(`"userID" = ? and "sync" = ?`, userID, false).Find(&events).Error
+	if err != nil {
+		return nil, err
+	}
+	err = dc.GormDB.Debug().Table("scheduled_events").Where(`"userID" = ? and sync = ?`, userID, false).
+		Updates(map[string]interface{}{"sync": true}).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return events, err
+}
+
 func (dc *DBRepo) rollbackTransaction() {
 	tx.Rollback()
 }

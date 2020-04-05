@@ -32,6 +32,7 @@ func main() {
 	g.POST("/defineAvailability", receivers.Post.DefineAvHandler)
 	g.GET("/getAvailability", receivers.Get.GetSlotsHandler)
 	g.POST("/scheduleMeeting", receivers.Post.MeetingScheduler)
+	g.POST("/syncWithGoogleCalendar", receivers.Post.SyncHandler)
 	e.Start(":8080")
 }
 
