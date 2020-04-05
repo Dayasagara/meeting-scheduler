@@ -15,6 +15,7 @@ import (
 func (p *PostHandler) DefineAvHandler(ctx echo.Context) error {
 	var availablility model.Availability
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+	defer ctx.Request().Body.Close()
 	req := ctx.Request().Header
 	token := req.Get("token")
 
@@ -26,7 +27,10 @@ func (p *PostHandler) DefineAvHandler(ctx echo.Context) error {
 	}
 
 	reqErr := json.NewDecoder(ctx.Request().Body).Decode(&availablility)
-	defer ctx.Request().Body.Close()
+	if !helpers.ValidateDate(availablility.Date) || !helpers.ValidateTime(availablility.StartSlot) || !helpers.ValidateTime(availablility.EndSlot) {
+		return helpers.CommonResponseHandler(400, "Invalid date or time", ctx)
+	}
+
 	if reqErr != nil {
 		log.Println(reqErr)
 		return helpers.CommonResponseHandler(400, "Request Error", ctx)
@@ -38,7 +42,7 @@ func (p *PostHandler) DefineAvHandler(ctx echo.Context) error {
 		log.Println(userExists)
 		return helpers.CommonResponseHandler(400, "Invalid user", ctx)
 	}
-
+	availablility.UserID = int(mapClaims["userID"].(float64))
 	if interfaces.DBEngine.CheckForDuplicate(availablility.UserID, availablility.Date) {
 		return helpers.CommonResponseHandler(400, "Slots already defined", ctx)
 	}

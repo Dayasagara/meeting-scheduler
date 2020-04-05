@@ -34,7 +34,6 @@ type Availability struct {
 	Date      string `json:"date" gorm:"column:date"`
 	StartSlot string `json:"startSlot"`
 	EndSlot   string `json:"endSlot"`
-	Duration  int    `json:"durationTime"`
 }
 
 type AvailabilitySlots struct {

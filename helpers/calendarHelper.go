@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 
 	"github.com/Dayasagara/meeting-scheduler/model"
 	"golang.org/x/net/context"
@@ -14,6 +15,17 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
 )
+
+var dateFormat = regexp.MustCompile(`(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d`)
+var timeFormat = regexp.MustCompile(`(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)`)
+
+func ValidateDate(date string) bool {
+	return dateFormat.MatchString(date)
+}
+
+func ValidateTime(time string) bool {
+	return timeFormat.MatchString(time)
+}
 
 // Retrieve a token, saves the token, then returns the generated client.
 func getClient(config *oauth2.Config) *http.Client {

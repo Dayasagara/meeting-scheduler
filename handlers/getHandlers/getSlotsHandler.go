@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/Dayasagara/meeting-scheduler/helpers"
@@ -15,24 +16,21 @@ import (
 
 func (g *GetHandler) GetSlotsHandler(ctx echo.Context) error {
 	var slots []model.AvailabilitySlots
-	var avParams model.GetAvParameters
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	req := ctx.Request().Header
 	token := req.Get("token")
-
+	targetUserID, _ := strconv.Atoi(req.Get("targetUserID"))
+	date := ctx.Param("date")
+	if !helpers.ValidateDate(date) {
+		return helpers.CommonResponseHandler(400, "Invalid date", ctx)
+	}
 	//decrypt the token and get the jwt claims
 	mapClaims, tokenErr := helpers.DecryptToken(token)
 	if tokenErr != nil {
 		log.Println(tokenErr)
 		return helpers.CommonResponseHandler(400, "Invalid token", ctx)
 	}
-
-	reqErr := json.NewDecoder(ctx.Request().Body).Decode(&avParams)
 	defer ctx.Request().Body.Close()
-	if reqErr != nil {
-		log.Println(reqErr)
-		return helpers.CommonResponseHandler(400, "Request Error", ctx)
-	}
 
 	//Authenticate the token claims
 	userExists, _ := interfaces.DBEngine.Authenticate(fmt.Sprintf("%v", mapClaims["email"]), fmt.Sprintf("%v", mapClaims["password"]))
@@ -41,9 +39,9 @@ func (g *GetHandler) GetSlotsHandler(ctx echo.Context) error {
 		return helpers.CommonResponseHandler(400, "Invalid user", ctx)
 	}
 
-	slots, dbErr := interfaces.DBEngine.GetAvailability(avParams.UserID, avParams.Date)
+	slots, dbErr := interfaces.DBEngine.GetAvailability(targetUserID, date)
 
-	var formattedSlots []model.AvailabilitySlots
+	var formattedSlots = []model.AvailabilitySlots{}
 	var formattedSlot model.AvailabilitySlots
 
 	for _, slot := range slots {

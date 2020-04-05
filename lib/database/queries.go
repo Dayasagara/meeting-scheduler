@@ -61,7 +61,7 @@ func (dc *DBRepo) DefineAvailability(availability model.Availability) error {
 
 	endSlot, endConvErr := strconv.Atoi(strings.Split(availability.EndSlot, ":")[0])
 	startSlot, startConvErr := strconv.Atoi(strings.Split(availability.StartSlot, ":")[0])
-	if endConvErr != nil || startConvErr != nil {
+	if endConvErr != nil || startConvErr != nil || startSlot >= endSlot {
 		return errors.New("Time conversion error")
 	}
 	for startSlot < endSlot {
