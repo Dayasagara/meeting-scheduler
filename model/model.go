@@ -50,6 +50,7 @@ type GetAvParameters struct {
 
 type ScheduleEvent struct {
 	UserID       int    `json:"userID" gorm:"column:userID"`
+	EventID      int    `json:"eventID" gorm:"column:eventID;primary_key;AUTO_INCREMENT"`
 	StartingFrom string `json:"startingFrom" gorm:"column:starting_from"`
 	EndingTill   string `json:"endingTill" gorm:"column:ending_till"`
 	Date         string `json:"date" gorm:"column:date"`

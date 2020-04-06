@@ -1,7 +1,6 @@
 package postHandlers
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/Dayasagara/meeting-scheduler/helpers"
@@ -12,22 +11,12 @@ import (
 
 func (p *PostHandler) SyncHandler(ctx echo.Context) error {
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	req := ctx.Request().Header
-	token := req.Get("token")
-
-	//decrypt the token and get the jwt claims
-	mapClaims, tokenErr := helpers.DecryptToken(token)
-	if tokenErr != nil {
-		log.Println(tokenErr)
-		return helpers.CommonResponseHandler(400, "Invalid token", ctx)
-	}
 	defer ctx.Request().Body.Close()
 
-	//Authenticate the token claims
-	userExists, _ := interfaces.DBEngine.Authenticate(fmt.Sprintf("%v", mapClaims["email"]), fmt.Sprintf("%v", mapClaims["password"]))
-	if userExists != nil {
-		log.Println(userExists)
-		return helpers.CommonResponseHandler(400, "Invalid user", ctx)
+	mapClaims, tokenErr := helpers.ValidateToken(ctx)
+	if tokenErr != nil {
+		log.Println(tokenErr)
+		return helpers.CommonResponseHandler(400, "Token Error", ctx)
 	}
 
 	//Get all unsync events

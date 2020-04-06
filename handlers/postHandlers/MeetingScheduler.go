@@ -2,7 +2,6 @@ package postHandlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/Dayasagara/meeting-scheduler/helpers"
@@ -17,27 +16,16 @@ func (p *PostHandler) MeetingScheduler(ctx echo.Context) error {
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	defer ctx.Request().Body.Close()
 
-	req := ctx.Request().Header
-	token := req.Get("token")
-
-	//decrypt the token and get the jwt claims
-	mapClaims, tokenErr := helpers.DecryptToken(token)
+	_, tokenErr := helpers.ValidateToken(ctx)
 	if tokenErr != nil {
 		log.Println(tokenErr)
-		return helpers.CommonResponseHandler(400, "Invalid token", ctx)
+		return helpers.CommonResponseHandler(400, "Token Error", ctx)
 	}
 
 	reqErr := json.NewDecoder(ctx.Request().Body).Decode(&event)
 	if reqErr != nil || !helpers.ValidateDate(event.Date) || !helpers.ValidateTime(event.StartingFrom) || !helpers.ValidateTime(event.EndingTill) {
 		log.Println(reqErr)
 		return helpers.CommonResponseHandler(400, "Request Error", ctx)
-	}
-
-	//Authenticate the token claims
-	userExists, _ := interfaces.DBEngine.Authenticate(fmt.Sprintf("%v", mapClaims["email"]), fmt.Sprintf("%v", mapClaims["password"]))
-	if userExists != nil {
-		log.Println(userExists)
-		return helpers.CommonResponseHandler(400, "Invalid user", ctx)
 	}
 
 	if !interfaces.DBEngine.CheckAvailability(event.UserID, event.Date, event.StartingFrom) {

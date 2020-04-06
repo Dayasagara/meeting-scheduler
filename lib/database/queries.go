@@ -129,6 +129,15 @@ func (dc *DBRepo) GetEvents(userID int) ([]model.ScheduleEvent, error) {
 	return events, err
 }
 
+func (dc *DBRepo) GetMyEvents(userID int) ([]model.ScheduleEvent, error) {
+	var events []model.ScheduleEvent
+	err := dc.GormDB.Debug().Table("scheduled_events").Where(`"userID" = ? `, userID).Find(&events).Error
+	if err != nil {
+		return nil, err
+	}
+	return events, err
+}
+
 func (dc *DBRepo) rollbackTransaction() {
 	tx.Rollback()
 }
