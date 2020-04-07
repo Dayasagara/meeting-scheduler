@@ -16,7 +16,9 @@ import (
 	"google.golang.org/api/calendar/v3"
 )
 
+//Regex for date validation in yyyy-mm-dd format
 var dateFormat = regexp.MustCompile(`([2]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))`)
+//Regex for time validation in hh:mm:ss format
 var timeFormat = regexp.MustCompile(`(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)`)
 
 func ValidateDate(date string) bool {

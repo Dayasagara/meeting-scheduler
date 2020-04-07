@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/Dayasagara/meeting-scheduler/interfaces"
 	"github.com/Dayasagara/meeting-scheduler/model"
@@ -49,15 +48,13 @@ func CreateToken(user model.User) (string, error) {
 		log.Println(err)
 		return "", errors.New("Couldn't find secret key")
 	}
-	currentTime := time.Now()
-	tokenExpiry := currentTime.AddDate(0, 0, 1)
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userID":   user.UserID,
 		"email":    user.Email,
 		"password": user.Password,
 	})
 
-	log.Println(tokenExpiry)
 	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		log.Println(err)
@@ -66,6 +63,7 @@ func CreateToken(user model.User) (string, error) {
 	return tokenString, nil
 }
 
+//Retreive secret key from env
 func getSecretKey() (string, error) {
 	err := godotenv.Load()
 	if err != nil {

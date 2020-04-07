@@ -25,7 +25,7 @@ func (p *PostHandler) MeetingScheduler(ctx echo.Context) error {
 	reqErr := json.NewDecoder(ctx.Request().Body).Decode(&event)
 	if reqErr != nil || !helpers.ValidateDate(event.Date) || !helpers.ValidateTime(event.StartingFrom) || !helpers.ValidateTime(event.EndingTill) {
 		log.Println(reqErr)
-		return helpers.CommonResponseHandler(400, "Request Error", ctx)
+		return helpers.CommonResponseHandler(400, "Invalid date or Event format", ctx)
 	}
 
 	if !interfaces.DBEngine.CheckAvailability(event.UserID, event.Date, event.StartingFrom) {
