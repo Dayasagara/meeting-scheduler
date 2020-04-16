@@ -17,7 +17,7 @@ func (p *PostHandler) LoginHandler(ctx echo.Context) error {
 	reqErr := json.NewDecoder(ctx.Request().Body).Decode(&user)
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	defer ctx.Request().Body.Close()
-	if reqErr != nil {
+	if reqErr != nil || user.Email == "" || user.Password == "" {
 		return helpers.CommonResponseHandler(400, "Req Error", ctx)
 	}
 
