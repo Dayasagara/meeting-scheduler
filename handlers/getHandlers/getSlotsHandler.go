@@ -18,18 +18,21 @@ func (g *GetHandler) GetSlotsHandler(ctx echo.Context) error {
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	defer ctx.Request().Body.Close()
 
+	req := ctx.Request().Header
+	targetUserID, idConvErr := strconv.Atoi(req.Get("targetUserID"))
+	if idConvErr != nil {
+		return helpers.CommonResponseHandler(400, "Invalid Target User ID", ctx)
+	}
+	date := ctx.Param("date")
+
+	if !helpers.ValidateDate(date) || !helpers.CheckPastDate(date) {
+		return helpers.CommonResponseHandler(400, "Invalid date", ctx)
+	}
+
 	_, tokenErr := helpers.ValidateToken(ctx)
 	if tokenErr != nil {
 		log.Println(tokenErr)
 		return helpers.CommonResponseHandler(400, "Token Error", ctx)
-	}
-
-	req := ctx.Request().Header
-	targetUserID, _ := strconv.Atoi(req.Get("targetUserID"))
-	date := ctx.Param("date")
-
-	if !helpers.ValidateDate(date) {
-		return helpers.CommonResponseHandler(400, "Invalid date", ctx)
 	}
 
 	slots, dbErr := interfaces.DBEngine.GetAvailability(targetUserID, date)

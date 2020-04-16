@@ -3,26 +3,43 @@ package helpers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"os"
-	"regexp"
-
 	"github.com/Dayasagara/meeting-scheduler/model"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"regexp"
+	"strconv"
+	"time"
 )
 
 //Regex for date validation in yyyy-mm-dd format
 var dateFormat = regexp.MustCompile(`([2]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))`)
+
 //Regex for time validation in hh:mm:ss format
 var timeFormat = regexp.MustCompile(`(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)`)
 
 func ValidateDate(date string) bool {
 	return dateFormat.MatchString(date)
+}
+
+func CheckPastDate(date string) bool {
+	year, month, day := time.Now().Date()
+	reqYear, _ := strconv.Atoi(date[0:4])
+	reqMonth, _ := strconv.Atoi(date[5:7])
+	reqDay, _ := strconv.Atoi(date[8:10])
+	if reqYear < year {
+		return false
+	} else if (reqYear == year) && (reqMonth < int(month)) {
+		return false
+	} else if (reqYear == year) && (reqMonth == int(month) && (reqDay < day)) {
+		return false
+	}
+	return true
 }
 
 func ValidateTime(time string) bool {

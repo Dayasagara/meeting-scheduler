@@ -16,16 +16,20 @@ func (p *PostHandler) MeetingScheduler(ctx echo.Context) error {
 	ctx.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	defer ctx.Request().Body.Close()
 
-	_, tokenErr := helpers.ValidateToken(ctx)
-	if tokenErr != nil {
-		log.Println(tokenErr)
-		return helpers.CommonResponseHandler(400, "Token Error", ctx)
-	}
-
 	reqErr := json.NewDecoder(ctx.Request().Body).Decode(&event)
 	if reqErr != nil || !helpers.ValidateDate(event.Date) || !helpers.ValidateTime(event.StartingFrom) || !helpers.ValidateTime(event.EndingTill) {
 		log.Println(reqErr)
 		return helpers.CommonResponseHandler(400, "Invalid date or Event format", ctx)
+	}
+
+	if !helpers.CheckPastDate(event.Date) {
+		return helpers.CommonResponseHandler(400, "Past date", ctx)
+	}
+
+	_, tokenErr := helpers.ValidateToken(ctx)
+	if tokenErr != nil {
+		log.Println(tokenErr)
+		return helpers.CommonResponseHandler(400, "Token Error", ctx)
 	}
 
 	if !interfaces.DBEngine.CheckAvailability(event.UserID, event.Date, event.StartingFrom) {
