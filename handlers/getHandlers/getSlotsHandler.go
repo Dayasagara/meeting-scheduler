@@ -56,13 +56,6 @@ func (g *GetHandler) GetSlotsHandler(ctx echo.Context) error {
 		formattedSlots = append(formattedSlots, <-slotQueue)
 		slotLen--
 	}
-	/*
-		for _, slot := range slots {
-			formattedSlot.StartSlot = slot.StartTime.String()[11:16]
-			formattedSlot.EndSlot = slot.StartTime.Add(time.Hour).String()[11:16]
-			formattedSlot.Availability = slot.Availability
-			formattedSlots = append(formattedSlots, formattedSlot)
-		}*/
 
 	if dbErr != nil {
 		log.Println(dbErr)
